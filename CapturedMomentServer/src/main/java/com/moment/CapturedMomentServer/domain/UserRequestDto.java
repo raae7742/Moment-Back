@@ -8,6 +8,7 @@ import lombok.Setter;
 import javax.persistence.Column;
 
 /* 테스트용 회원 가입에 사용될 임시 UserRequestDto (현애, 2021-08-01) */
+/*예진 2021-08-08 수정 그냥 써도 될듯*/
 
 @Getter
 @AllArgsConstructor

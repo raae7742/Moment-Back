@@ -18,22 +18,11 @@ import org.springframework.web.bind.annotation.RestController;
 public class SignUpController {
     private final SignUpService signUpService;
 
-    /*@GetMapping("/members/new")
-    public String createForm(){
-        return "members/createMemberForm";
-    }*/
-
     @PostMapping("/user/signup")
     public String create(@RequestBody UserRequestDto userDto){
-
-       /* User user = new User();
-        user.update(userDto);
-        signUpService.signUp(user);
-        System.out.println(user.getName());
-        return "redirect:/";*/
         User user = new User(userDto);
         signUpService.signUp(user);
-        return null;//"redirect:/";
+        return "redirect:/";
     }
 
 }

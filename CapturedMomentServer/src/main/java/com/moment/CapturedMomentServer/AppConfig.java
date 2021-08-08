@@ -7,6 +7,7 @@ import com.moment.CapturedMomentServer.service.SignUpServiceImpl;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
+/*김예진 2021-08-08*/
 @Configuration
 public class AppConfig {
 

@@ -8,9 +8,9 @@ import javax.transaction.Transactional;
 import java.util.List;
 import java.util.Optional;
 
+/*2021-08-08 김예진*/
 @Transactional
 @RequiredArgsConstructor
-/*2021-08-08 김예진*/
 public class SignUpServiceImpl implements SignUpService{
     private final UserRepository userRepository;
     public String signUp(User user){
