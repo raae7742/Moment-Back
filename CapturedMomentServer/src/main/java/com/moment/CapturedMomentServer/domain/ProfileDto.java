@@ -17,7 +17,7 @@ public class ProfileDto {
     public ProfileDto(User user) {
         this.id = user.getId();
         this.nickname = user.getNickname();
-        this.comment = user.getUser_comment();
-        this.profile = user.getUser_profile();
+        this.comment = user.getComment();
+        this.profile = user.getImg_url();
     }
 }
