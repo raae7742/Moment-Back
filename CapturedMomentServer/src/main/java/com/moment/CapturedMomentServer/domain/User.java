@@ -1,44 +1,98 @@
 package com.moment.CapturedMomentServer.domain;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
+
 import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
 
 /* 회원 정보 Entity (현애, 2021-08-01) */
-
 @Getter
 @NoArgsConstructor
 @Entity
-public class User extends Timestamped{
+@Table(name = "user")
+@Builder
+@AllArgsConstructor
+public class User extends Timestamped implements UserDetails {  // SpringSecurity 사용을 위해 UserDetails 상속
 
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @JsonIgnore
     @Id
+    @Column(name = "id")
+    @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;                // 회원 id
 
-    @Column(nullable = false)
+    @Column(name = "nickname")
     private String nickname;        // 회원 닉네임
 
-    @Column(nullable = false)
-    private String user_name;       // 회원 실명
+    @Column(name = "name")
+    private String name;       // 회원 실명
 
-    @Column(nullable = false)
-    private String user_email;      // 회원 이메일
+    @Column(name = "email", unique = true)
+    private String email;      // 회원 이메일
 
-    @Column(nullable = false)
-    private String user_pw;         // 회원 패스워드
+    @JsonIgnore
+    @Column(name = "pw")
+    private String pw;         // 회원 패스워드
 
-    @Column(nullable = true)
-    private String user_comment;    // 회원 자기소개 글
+    @Column(name = "comment", nullable = true)
+    private String comment;    // 회원 자기소개 글
 
-    @Column(nullable = true)
-    private String user_profile;    // 회원 프로필 사진 URL
+    @Column(name = "profile", nullable = true)
+    private String profile;    // 회원 프로필 사진 URL
+
+    @ElementCollection(fetch = FetchType.EAGER)
+    @Builder.Default
+    private List<String> roles = new ArrayList<>();     // 유저의 접근 권한(Admin, User)
 
     public User(UserRequestDto requestDto) {
         this.nickname = requestDto.getNickname();
-        this.user_name = requestDto.getUser_name();
-        this.user_email = requestDto.getUser_email();
-        this.user_pw = requestDto.getUser_pw();
-        this.user_comment = requestDto.getUser_comment();
-        this.user_profile = requestDto.getUser_profile();
+        this.name = requestDto.getName();
+        this.email = requestDto.getEmail();
+        this.pw = requestDto.getPw();
+        this.comment = requestDto.getComment();
+        this.profile = requestDto.getProfile();
+    }
+
+    /* 아래부터 UserDetails Override 메소드 */
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        return null;
+    }
+
+    @Override
+    public String getPassword() {
+        return pw;
+    }
+
+    @Override
+    public String getUsername() {
+        return email;
+    }
+
+    @Override
+    public boolean isAccountNonExpired() {
+        return true;
+    }
+
+    @Override
+    public boolean isAccountNonLocked() {
+        return true;
+    }
+
+    @Override
+    public boolean isCredentialsNonExpired() {
+        return true;
+    }
+
+    @Override
+    public boolean isEnabled() {
+        return true;
     }
 }

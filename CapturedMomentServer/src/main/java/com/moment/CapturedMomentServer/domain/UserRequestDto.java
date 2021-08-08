@@ -7,9 +7,9 @@ import lombok.Getter;
 @Getter
 public class UserRequestDto {
     private String nickname;
-    private String user_name;
-    private String user_email;
-    private String user_pw;
-    private String user_comment;
-    private String user_profile;
+    private String name;
+    private String email;
+    private String pw;
+    private String comment;
+    private String profile;
 }
