@@ -3,6 +3,8 @@ package com.moment.CapturedMomentServer.controller;
 
 import com.moment.CapturedMomentServer.domain.User;
 import com.moment.CapturedMomentServer.domain.UserRequestDto;
+import com.moment.CapturedMomentServer.repository.UserRepository;
+import com.moment.CapturedMomentServer.response.JSONResponse;
 import com.moment.CapturedMomentServer.service.SignUpService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
@@ -19,10 +21,14 @@ public class SignUpController {
     private final SignUpService signUpService;
 
     @PostMapping("/user/signup")
-    public String create(@RequestBody UserRequestDto userDto){
+    public JSONResponse<String> create(@RequestBody UserRequestDto userDto){
         User user = new User(userDto);
-        signUpService.signUp(user);
-        return "redirect:/";
+        String email = signUpService.signUp(user);
+        JSONResponse<String> response = new JSONResponse<>();
+        response.setStatusCode(200);
+        response.setMessage("회원가입 성공");
+        response.setData(email);
+        return response;
     }
 
 }

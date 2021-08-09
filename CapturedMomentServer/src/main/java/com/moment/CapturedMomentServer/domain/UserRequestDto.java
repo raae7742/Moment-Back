@@ -3,6 +3,7 @@ package com.moment.CapturedMomentServer.domain;
 import com.sun.istack.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.persistence.Column;
@@ -12,6 +13,7 @@ import javax.persistence.Column;
 
 @Getter
 @AllArgsConstructor
+@NoArgsConstructor
 public class UserRequestDto {
 
     private String nickname;        // 회원 닉네임

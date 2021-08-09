@@ -12,9 +12,6 @@ import java.util.Optional;
 @Repository
 public interface UserRepository extends JpaRepository<User, Long> {
 
-    //저장
-    User save(User user);
-
     //email로 회원 조회
     Optional<User> findByEmail(String email);
 
