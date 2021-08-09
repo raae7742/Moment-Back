@@ -3,7 +3,7 @@ package com.moment.CapturedMomentServer.domain;
 import lombok.Getter;
 import lombok.Setter;
 
-/* 회원 프로필 정보를 전달할 때 사용할 DTO (현애, 2021-08-01) */
+/* 회원 프로필 정보를 전달할 때 사용할 임시 DTO (현애, 2021-08-01) */
 
 @Getter
 @Setter

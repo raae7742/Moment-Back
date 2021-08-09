@@ -10,7 +10,7 @@ import java.util.Optional;
 /* User Entity에 대한 Repository (현애, 2021-08-01 예진, 2021-08-08) */
 @SuppressWarnings("unchecked")
 @Repository
-public interface UserRepository {
+public interface UserRepository extends JpaRepository<User, Long> {
 
     //저장
     User save(User user);
