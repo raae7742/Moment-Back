@@ -27,9 +27,9 @@ public class ProfileController {
     }
 
     /* 테스트를 위해 만든 임시 회원가입 API */
-    @PostMapping("/user/signup")
+    /*@PostMapping("/user/signup")
     public User createUser(@RequestBody UserRequestDto requestDto) {
         User user = new User(requestDto);
         return userRepository.save(user);
-    }
+    }*/
 }

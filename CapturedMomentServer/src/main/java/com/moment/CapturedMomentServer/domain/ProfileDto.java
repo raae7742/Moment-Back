@@ -3,7 +3,7 @@ package com.moment.CapturedMomentServer.domain;
 import lombok.Getter;
 import lombok.Setter;
 
-/* 회원 프로필 정보를 전달할 때 사용할 DTO (현애, 2021-08-01) */
+/* 회원 프로필 정보를 전달할 때 사용할 임시 DTO (현애, 2021-08-01) */
 
 @Getter
 @Setter
@@ -17,7 +17,7 @@ public class ProfileDto {
     public ProfileDto(User user) {
         this.id = user.getId();
         this.nickname = user.getNickname();
-        this.comment = user.getUser_comment();
-        this.profile = user.getUser_profile();
+        this.comment = user.getComment();
+        this.profile = user.getImg_url();
     }
 }
