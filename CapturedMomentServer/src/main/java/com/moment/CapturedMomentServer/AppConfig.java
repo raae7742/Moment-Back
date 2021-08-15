@@ -6,6 +6,7 @@ import com.moment.CapturedMomentServer.service.SignUpServiceImpl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 /*김예진 2021-08-08*/
 @Configuration
@@ -13,11 +14,12 @@ import org.springframework.context.annotation.Configuration;
 public class AppConfig {
 
     private final UserRepository userRepository;
+    private final PasswordEncoder passwordEncoder;
 
     @Bean
     public SignUpService signUpService(){
         System.out.println("call AppConfig.memberService");
-        return new SignUpServiceImpl(userRepository);
+        return new SignUpServiceImpl(userRepository, passwordEncoder);
     }
 
 
