@@ -3,6 +3,8 @@ package com.moment.CapturedMomentServer.service;
 import com.moment.CapturedMomentServer.domain.User;
 import com.moment.CapturedMomentServer.domain.UserRequestDto;
 import com.moment.CapturedMomentServer.repository.UserRepository;
+import com.moment.CapturedMomentServer.util.ConflictError;
+import com.moment.CapturedMomentServer.util.UnauthorizedError;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
@@ -14,25 +16,27 @@ import java.util.Optional;
 
 @Transactional
 @RequiredArgsConstructor
-public class SignUpServiceImpl implements SignUpService{
+public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;                              // 패스워드 인코더
 
     public User signUp(UserRequestDto requestDto){
-        if (validateDuplicateMember(requestDto.getEmail())) return null;        // 이메일 중복 체크
+        if (validateDuplicateMember(requestDto.getEmail()))
+            throw new UnauthorizedError("이미 가입된 e-mail입니다.");        // 이메일 중복 체크
         requestDto.setPw(passwordEncoder.encode(requestDto.getPw()));           // 비밀번호 암호화
         return userRepository.save(new User(requestDto));
     }
 
-    public User loginCheck(UserRequestDto.LoginDto loginDto) {
+    public User signIn(UserRequestDto.LoginDto loginDto) {
 
-        if (!validateDuplicateMember(loginDto.getEmail())) return null;         // 이메일 중복 체크
         User user = userRepository.findByEmail(loginDto.getEmail())             // 이메일로 user 검색
-                .orElseThrow(() -> new IllegalArgumentException("가입되지 않은 E-MAIL입니다."));
+                .orElseThrow(() -> new ConflictError("가입되지 않은 e-mail입니다."));
+                //.orElse(null);
 
         if (!passwordEncoder.matches(loginDto.getPw(), user.getPw()))           // 패스워드 확인
-            throw new IllegalArgumentException("잘못된 비밀번호입니다.");
+            throw new ConflictError("잘못된 비밀번호입니다.");
+            //user = null;
 
         return user;
     }

@@ -18,12 +18,22 @@ import java.util.List;
 @NoArgsConstructor
 public class UserRequestDto {
 
+    @NotNull
     private String nickname;   // 회원 닉네임
+
+    @NotNull
     private String name;       // 회원 실명
+
+    @NotNull
     private String email;      // 회원 이메일
+
+    @NotNull
     private String pw;         // 회원 패스워드
+
     private String comment;    // 회원 자기소개 글
+
     private List<String> roles = new ArrayList<>();
+
     private String img_url;    // 회원 프로필 사진 URL
 
     @Getter
