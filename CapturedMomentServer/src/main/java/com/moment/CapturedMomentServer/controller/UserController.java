@@ -35,6 +35,7 @@ public class UserController {
             response.setData(user);
         }
         else{
+            //throw exception시 이 코드 필요 없음
             /*response.setStatusCode(409);
             response.setMessage("이미 가입된 이메일");
             response.setData(null);*/
@@ -54,6 +55,7 @@ public class UserController {
             response.setData(jwtTokenProvider.createToken(user.getEmail(), user.getRoles()));
         }
         else {
+            //throw exception시 이 코드 필요 없음
             /*response.setStatusCode(401);
             response.setMessage("가입하지 않은 이메일이거나, 잘못된 비밀번호입니다.");
             response.setData(null);*/
