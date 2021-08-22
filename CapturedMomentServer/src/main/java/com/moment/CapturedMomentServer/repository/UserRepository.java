@@ -7,16 +7,12 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 import java.util.Optional;
 
-/* User Entity에 대한 Repository (현애, 2021-08-01 예진, 2021-08-08) */
-@SuppressWarnings("unchecked")
+/* User Entity에 대한 Repository (현애, 2021-08-15 수정) */
 @Repository
 public interface UserRepository extends JpaRepository<User, Long> {
 
-    //email로 회원 조회
-    Optional<User> findByEmail(String email);
+    boolean existsByEmail(String email);        // email 중복 여부
 
-    Optional<User> findById(Long id);
+    Optional<User> findByEmail(String email);   // email로 회원 조회
 
-    //모든 회원 조회
-    List<User> findAll();
 }
