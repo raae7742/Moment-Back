@@ -9,6 +9,7 @@ import lombok.Setter;
 @Setter
 public class ProfileDto {
 
+    /*id String 으로 수정*/
     private Long id;            // 회원 id
     private String nickname;    // 회원 닉네임
     private String comment;     // 회원의 자기소개 글

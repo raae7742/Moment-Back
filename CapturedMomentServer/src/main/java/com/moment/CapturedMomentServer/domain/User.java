@@ -1,11 +1,13 @@
 package com.moment.CapturedMomentServer.domain;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.moment.CapturedMomentServer.util.RandomGenerator;
 import com.sun.istack.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.GenericGenerator;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
@@ -28,6 +30,17 @@ public class User extends Timestamped implements UserDetails {  // SpringSecurit
     @Id
     @Column(name = "id")
     @GeneratedValue(strategy = GenerationType.AUTO)
+
+    /* 짧은 id 생성
+    @GeneratedValue(generator = RandomGenerator.generatorName)
+    @GenericGenerator(name = RandomGenerator.generatorName, strategy = "com.moment.CapturedMomentServer.util.RandomGenerator")*/
+
+    /* 긴 id 생성 (간단함)
+    @Column(name = "id", columnDefinition = "CHAR(32)")
+    @GeneratedValue(generator = "uuid")
+    @GenericGenerator(name = "uuid", strategy = "uuid")*/
+
+    /*id String 으로 수정*/
     private Long id;                // 회원 id
 
     @Column(name = "nickname")
