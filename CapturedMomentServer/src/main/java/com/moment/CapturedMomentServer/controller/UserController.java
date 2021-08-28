@@ -4,13 +4,12 @@ package com.moment.CapturedMomentServer.controller;
 import com.moment.CapturedMomentServer.config.security.JwtTokenProvider;
 import com.moment.CapturedMomentServer.domain.User;
 import com.moment.CapturedMomentServer.domain.UserRequestDto;
+import com.moment.CapturedMomentServer.repository.UserRepository;
 import com.moment.CapturedMomentServer.response.JSONResponse;
 import com.moment.CapturedMomentServer.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.Collections;
 
@@ -21,6 +20,7 @@ import java.util.Collections;
 @RequiredArgsConstructor
 public class UserController {
     private final UserService userService;
+    private final UserRepository userRepository;
     private final JwtTokenProvider jwtTokenProvider;
 
     @PostMapping("/user/signup")
@@ -34,12 +34,7 @@ public class UserController {
             response.setMessage("회원가입 성공");
             response.setData(user);
         }
-        else{
-            //throw exception시 이 코드 필요 없음
-            /*response.setStatusCode(409);
-            response.setMessage("이미 가입된 이메일");
-            response.setData(null);*/
-        }
+
         return response;
     }
 
@@ -54,13 +49,18 @@ public class UserController {
             response.setMessage("로그인 성공");
             response.setData(jwtTokenProvider.createToken(user.getEmail(), user.getRoles()));
         }
-        else {
-            //throw exception시 이 코드 필요 없음
-            /*response.setStatusCode(401);
-            response.setMessage("가입하지 않은 이메일이거나, 잘못된 비밀번호입니다.");
-            response.setData(null);*/
-        }
+
         return response;
     }
 
+    /* 전달받은 id로 사용자를 검색하고 프로필 정보를 전달하는 API (get) */
+    @GetMapping("/my/profile/{id}")
+    public UserRequestDto.ProfileDto readProfile(@PathVariable Long id) {              // request 값은 임시로 id를 받도록 함 (jwt로 수정할 예정)
+        User user = userRepository.findById(id).orElseThrow(
+                () -> new IllegalArgumentException("아이디가 존재하지 않습니다.")
+        );
+
+        UserRequestDto.ProfileDto profile = new UserRequestDto.ProfileDto(user);
+        return profile;
+    }
 }

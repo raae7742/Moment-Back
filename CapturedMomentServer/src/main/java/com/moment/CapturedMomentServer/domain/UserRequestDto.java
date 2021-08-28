@@ -42,4 +42,20 @@ public class UserRequestDto {
         private String email;
         private String pw;
     }
+
+    @Getter
+    @Setter
+    public static class ProfileDto {
+        private Long id;            // 회원 id
+        private String nickname;    // 회원 닉네임
+        private String comment;     // 회원의 자기소개 글
+        private String profile;     // 회원의 프로필 사진 URL
+
+        public ProfileDto(User user) {
+            this.id = user.getId();
+            this.nickname = user.getNickname();
+            this.comment = user.getComment();
+            this.profile = user.getImg_url();
+        }
+    }
 }
