@@ -53,14 +53,16 @@ public class UserController {
         return response;
     }
 
-    /* 전달받은 id로 사용자를 검색하고 프로필 정보를 전달하는 API (get) */
-    @GetMapping("/my/profile/{id}")
-    public UserRequestDto.ProfileDto readProfile(@PathVariable Long id) {              // request 값은 임시로 id를 받도록 함 (jwt로 수정할 예정)
-        User user = userRepository.findById(id).orElseThrow(
+    /* 전달받은 토큰으로 사용자를 검색하고 프로필 정보를 전달하는 API (get) */
+    @GetMapping("/user/mypage")
+    public UserRequestDto.ProfileDto readProfile(@RequestHeader("X-AUTH-TOKEN") String token) { // "X-AUTH-TOKEN" 헤더에서 토큰 받아오기
+        String email = jwtTokenProvider.getUserEmail(token);                                    // 토큰에서 유저 이메일 추출
+
+        User user = userRepository.findByEmail(email).orElseThrow(                              // 이메일로 유저 검색
                 () -> new IllegalArgumentException("아이디가 존재하지 않습니다.")
         );
 
-        UserRequestDto.ProfileDto profile = new UserRequestDto.ProfileDto(user);
+        UserRequestDto.ProfileDto profile = new UserRequestDto.ProfileDto(user);                // 프로필 정보 전달
         return profile;
     }
 }
