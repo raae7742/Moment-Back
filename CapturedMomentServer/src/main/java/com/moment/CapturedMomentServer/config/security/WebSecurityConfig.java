@@ -55,8 +55,6 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS) // 토큰 기반 인증 -> 세션 사용 x
                 .and()
                 .authorizeRequests()    // 요청에 대한 사용 권한 체크
-                .antMatchers("/my/**").authenticated()  // 마이페이지와 게시글 작성 api는 인증을 거쳐야 함
-                .antMatchers("/posts").authenticated()
                 .anyRequest().permitAll()                          // 그 외 나머지 요청은 인증 없이도 사용 가능
                 .and()
                 .addFilterBefore(new JwtAuthenticationFilter(jwtTokenProvider),

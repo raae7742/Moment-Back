@@ -36,10 +36,27 @@ public class UserRequestDto {
 
     private String img_url;    // 회원 프로필 사진 URL
 
+
+    // 로그인 dto
     @Getter
     @Setter
     public static class LoginDto {
         private String email;
         private String pw;
+    }
+
+    // 마이페이지 프로필 dto
+    @Getter
+    @Setter
+    public static class ProfileDto {
+        private String nickname;    // 회원 닉네임
+        private String comment;     // 회원의 자기소개 글
+        private String profile;     // 회원의 프로필 사진 URL
+
+        public ProfileDto(User user) {
+            this.nickname = user.getNickname();
+            this.comment = user.getComment();
+            this.profile = user.getImg_url();
+        }
     }
 }
