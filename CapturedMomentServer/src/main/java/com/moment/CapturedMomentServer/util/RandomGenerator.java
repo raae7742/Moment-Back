@@ -17,7 +17,7 @@ public class RandomGenerator implements IdentifierGenerator {
 
     @Override
     public Serializable generate(SharedSessionContractImplementor session, Object object) throws HibernateException {
-        RandomString ran  = new RandomString(8, ThreadLocalRandom.current());
+        RandomString ran  = new RandomString(12, ThreadLocalRandom.current());
         String id = ran.nextString();
         System.out.println(id);
         return id;

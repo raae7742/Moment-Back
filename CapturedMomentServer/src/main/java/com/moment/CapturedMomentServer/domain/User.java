@@ -29,19 +29,9 @@ public class User extends Timestamped implements UserDetails {  // SpringSecurit
     @JsonIgnore
     @Id
     @Column(name = "id")
-    @GeneratedValue(strategy = GenerationType.AUTO)
-
-    /* 짧은 id 생성
     @GeneratedValue(generator = RandomGenerator.generatorName)
-    @GenericGenerator(name = RandomGenerator.generatorName, strategy = "com.moment.CapturedMomentServer.util.RandomGenerator")*/
-
-    /* 긴 id 생성 (간단함)
-    @Column(name = "id", columnDefinition = "CHAR(32)")
-    @GeneratedValue(generator = "uuid")
-    @GenericGenerator(name = "uuid", strategy = "uuid")*/
-
-    /*id String 으로 수정*/
-    private Long id;                // 회원 id
+    @GenericGenerator(name = RandomGenerator.generatorName, strategy = "com.moment.CapturedMomentServer.util.RandomGenerator")
+    private String id;                // 회원 id
 
     @Column(name = "nickname")
     private String nickname;        // 회원 닉네임

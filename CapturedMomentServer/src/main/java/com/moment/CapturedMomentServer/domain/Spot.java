@@ -1,8 +1,10 @@
 package com.moment.CapturedMomentServer.domain;
 
+import com.moment.CapturedMomentServer.util.RandomGenerator;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
 
@@ -12,7 +14,8 @@ import javax.persistence.*;
 public class Spot {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(generator = RandomGenerator.generatorName)
+    @GenericGenerator(name = RandomGenerator.generatorName, strategy = "com.moment.CapturedMomentServer.util.RandomGenerator")
     private Long id;
 
     @Column(nullable = false)
