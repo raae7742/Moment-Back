@@ -26,5 +26,7 @@ public interface SpotRepository extends JpaRepository<Spot, Long> {
     nativeQuery = true)
     public Long spotIdGet(double source_lat, double source_lon);
 
+    Spot findByLatitudeAndLongitude(Double latitude, Double longitude);
+
 
 }
