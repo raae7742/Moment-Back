@@ -26,22 +26,35 @@ public class PostController {
     public JSONResponse<Post> createPosts(@RequestHeader("X-AUTH-TOKEN") String token,
                                           @RequestBody PostRequestDto requestDto) {
 
-        Spot spot = new Spot(requestDto.getLatitude(), requestDto.getLongitude());
-//        Long spotId = spot.getId();
-//        Spot responseSpot = spotRepository.save(spot);
-        Post post = new Post(requestDto, spotRepository.save(spot).getId(), jwtTokenProvider.getUserEmail(token));
-        Post responsePost = postRepository.save(post);
 
-        for(int i=0; i<requestDto.getTag().size(); i++){
-            PostTag tag = new PostTag(post.getId(), requestDto.getTag().indexOf(i) + 2);
-            postTagRepository.save(tag);
+        if (spotRepository.existsByLatitudeAndLongitude(requestDto.getLatitude(), requestDto.getLongitude())){
+            // 이미 테이블에 그 위도, 경도가 있으면 -> 아이디 찾아오기..
+            Post post = new Post(requestDto, spotRepository.spotIdGet(requestDto.getLatitude(), requestDto.getLongitude()), jwtTokenProvider.getUserEmail(token));
+            Post responsePost = postRepository.save(post);
+            for(int i=0; i<requestDto.getTag().size(); i++){
+                PostTag tag = new PostTag(post.getId(), requestDto.getTag().get(i));
+                postTagRepository.save(tag);
+            }
+
         }
+        else {
+            // 없으면
+            Spot spot = new Spot(requestDto.getLatitude(), requestDto.getLongitude());
+            Post post = new Post(requestDto, spotRepository.save(spot).getId(), jwtTokenProvider.getUserEmail(token));
+            Post responsePost = postRepository.save(post);
+            for(int i=0; i<requestDto.getTag().size(); i++){
+                PostTag tag = new PostTag(post.getId(), requestDto.getTag().indexOf(i) + 2);
+                postTagRepository.save(tag);
+            }
 
+
+        }
         JSONResponse<Post> response = new JSONResponse<>();
         response.setStatusCode(200);
         response.setMessage("글 작성 성공");
-        response.setData(responsePost);
+        response.setData(null);
         return response;
+
     }
 
 }

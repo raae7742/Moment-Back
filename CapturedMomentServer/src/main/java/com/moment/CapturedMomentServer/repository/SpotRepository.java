@@ -20,6 +20,11 @@ public interface SpotRepository extends JpaRepository<Spot, Long> {
     @Query(value="SELECT * FROM spot", nativeQuery = true)
     public List<Spot> getAllData();
 
-    Boolean findByLatitudeAndLongitude(Double latitude, Double longitude);
+    boolean existsByLatitudeAndLongitude(Double latitude, Double longitude);
+
+    @Query(value = "SELECT id FROM capturedmoment.spot WHERE latitude=?1 AND longitude=?2",
+    nativeQuery = true)
+    public Long spotIdGet(double source_lat, double source_lon);
+
 
 }
