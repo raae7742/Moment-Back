@@ -1,5 +1,6 @@
 package com.moment.CapturedMomentServer.controller;
 
+import com.moment.CapturedMomentServer.config.security.JwtTokenProvider;
 import com.moment.CapturedMomentServer.domain.Post;
 import com.moment.CapturedMomentServer.domain.PostRequestDto;
 import com.moment.CapturedMomentServer.domain.Spot;
@@ -18,6 +19,7 @@ public class PostController {
 
     private final PostRepository postRepository;
     private final SpotRepository spotRepository;
+    private final JwtTokenProvider jwtTokenProvider;
 
     @PostMapping("/post")
     public JSONResponse<Post> createPosts(@RequestHeader("X-AUTH-TOKEN") String token,
@@ -26,7 +28,7 @@ public class PostController {
         Spot spot = new Spot(requestDto.getLatitude(), requestDto.getLongitude());
 //        Long spotId = spot.getId();
 //        Spot responseSpot = spotRepository.save(spot);
-        Post post = new Post(requestDto, spotRepository.save(spot).getId());
+        Post post = new Post(requestDto, spotRepository.save(spot).getId(), jwtTokenProvider.getUserEmail(token));
         Post responsePost = postRepository.save(post);
 
         JSONResponse<Post> response = new JSONResponse<>();

@@ -17,7 +17,7 @@ public class Post extends Timestamped{
     private Long id;
 
     @Column(nullable = false)
-    private int writer;
+    private String writer;
 
     @Column(nullable = false)
     private String img_url;
@@ -28,8 +28,8 @@ public class Post extends Timestamped{
     @Column(nullable = false)
     private Long spot_id;
 
-    public Post(PostRequestDto requestDto, Long spotId){
-        this.writer = 190; // 이후 수정
+    public Post(PostRequestDto requestDto, Long spotId, String userEmail){
+        this.writer = userEmail;
         this.img_url = requestDto.getImg_url();
         this.contents = requestDto.getContents();
         this.spot_id = spotId;
