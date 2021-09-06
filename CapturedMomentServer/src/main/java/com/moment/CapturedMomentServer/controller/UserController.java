@@ -7,6 +7,7 @@ import com.moment.CapturedMomentServer.domain.UserRequestDto;
 import com.moment.CapturedMomentServer.repository.UserRepository;
 import com.moment.CapturedMomentServer.response.JSONResponse;
 import com.moment.CapturedMomentServer.service.UserService;
+import io.swagger.annotations.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
@@ -23,6 +24,14 @@ public class UserController {
     private final UserRepository userRepository;
     private final JwtTokenProvider jwtTokenProvider;
 
+    @ApiOperation(value = "회원가입",
+            httpMethod = "POST",
+            response = JSONResponse.class,
+            notes = "회원 정보를 받아와 회원을 등록한다."
+    )
+    @ApiResponses({
+            @ApiResponse(code = 200, message = "회원가입 성공")
+    })
     @PostMapping("/user/signup")
     public JSONResponse<User> create(@RequestBody UserRequestDto userDto){
         userDto.setRoles(Collections.singletonList("ROLE_USER")); // 최초 가입시 USER로 설정
@@ -38,7 +47,15 @@ public class UserController {
         return response;
     }
 
-    // 로그인
+    @ApiOperation(value = "로그인",
+            httpMethod = "POST",
+            response = JSONResponse.class,
+            notes = "회원의 이메일과 패스워드로 로그인을 시도한 후, 성공 시 JWT 토큰을 반환한다."
+    )
+    @ApiResponses({
+            @ApiResponse(code = 200, message = "로그인 성공"),
+            @ApiResponse(code = 401, message = "이메일 또는 비밀번호 오류")
+    })
     @PostMapping("/user/signin")
     public JSONResponse<String> login(@RequestBody UserRequestDto.LoginDto requestDto) {
         User user = userService.signIn(requestDto);
@@ -53,7 +70,15 @@ public class UserController {
         return response;
     }
 
-    /* 전달받은 토큰으로 사용자를 검색하고 프로필 정보를 전달하는 API (get) */
+    @ApiOperation(value = "마이페이지 프로필 정보 조회",
+            httpMethod = "GET",
+            response = JSONResponse.class,
+            notes = "헤더의 JWT Token으로 사용자를 검색하고 프로필 정보를 조회한다."
+    )
+    @ApiResponses({
+            @ApiResponse(code = 200, message = "프로필 조회 성공")
+    })
+    @ApiImplicitParam(name = "X-AUTH-TOKEN", value = "JWT 토큰", required = true, dataType = "String", paramType = "header")
     @GetMapping("/user/mypage")
     public UserRequestDto.ProfileDto readProfile(@RequestHeader("X-AUTH-TOKEN") String token) { // "X-AUTH-TOKEN" 헤더에서 토큰 받아오기
         String email = jwtTokenProvider.getUserEmail(token);                                    // 토큰에서 유저 이메일 추출

@@ -1,8 +1,16 @@
 package com.moment.CapturedMomentServer.response;
 
+import io.swagger.annotations.ApiModelProperty;
+
 public class JSONResponse<T> {
+
+    @ApiModelProperty(example = "상태 코드")
     private int statusCode;
+
+    @ApiModelProperty(example = "상태 메세지")
     private String message;
+
+    @ApiModelProperty(example = "전달할 데이터")
     private T data;
 
     public JSONResponse() {
