@@ -56,4 +56,14 @@ public class UserServiceImpl implements UserService {
         return userRepository.findByEmail(email);
     }
 
+    @Override
+    public String updateProfile(String email, UserRequestDto.ProfileDto requestDto) {
+        User user = userRepository.findByEmail(email).orElseThrow(                              // 이메일로 유저 검색
+                () -> new IllegalArgumentException("아이디가 존재하지 않습니다.")
+        );
+        user.update(requestDto);
+
+        return email;
+    }
+
 }

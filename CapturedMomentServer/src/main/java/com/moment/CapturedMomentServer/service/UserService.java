@@ -25,4 +25,7 @@ public interface UserService {
 
     //비밀번호 재설정하기(희망)
 
+    // 프로필 수정하기
+    public String updateProfile(String id, UserRequestDto.ProfileDto requestDto);
+
 }

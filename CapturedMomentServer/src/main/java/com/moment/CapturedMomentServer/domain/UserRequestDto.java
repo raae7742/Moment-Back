@@ -80,12 +80,18 @@ public class UserRequestDto {
 
         @ApiParam(value = "회원 프로필 이미지 URL")
         @ApiModelProperty(example = "프로필 이미지 URL")
-        private String profile;     // 회원의 프로필 사진 URL
+        private String img_url;     // 회원의 프로필 사진 URL
 
         public ProfileDto(User user) {
             this.nickname = user.getNickname();
             this.comment = user.getComment();
-            this.profile = user.getImg_url();
+            this.img_url = user.getImg_url();
+        }
+
+        public ProfileDto(String nickname, String comment, String img_url) {
+            this.nickname = nickname;
+            this.comment = comment;
+            this.img_url = img_url;
         }
     }
 }

@@ -101,4 +101,9 @@ public class User extends Timestamped implements UserDetails {  // SpringSecurit
         return true;
     }
 
+    // 프로필 업데이트
+    public void update(UserRequestDto.ProfileDto requestDto) {
+        this.comment = requestDto.getComment();
+        this.img_url = requestDto.getImg_url();
+    }
 }
