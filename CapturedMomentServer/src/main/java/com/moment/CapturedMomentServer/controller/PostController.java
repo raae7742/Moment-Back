@@ -6,6 +6,8 @@ import com.moment.CapturedMomentServer.repository.PostRepository;
 import com.moment.CapturedMomentServer.repository.PostTagRepository;
 import com.moment.CapturedMomentServer.repository.SpotRepository;
 import com.moment.CapturedMomentServer.response.JSONResponse;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
@@ -77,13 +79,46 @@ public class PostController {
     @GetMapping("/post/mypage")
     public JSONResponse<List<Post>> createPosts(@RequestHeader("X-AUTH-TOKEN") String token){
 
-        //List<Post> personalPost = postRepository.findByEmail(jwtTokenProvider.getUserEmail(token));
+        //Post post = postRepository.findByWriter(jwtTokenProvider.getUserEmail(token));
 
         JSONResponse<List<Post>> response = new JSONResponse<>();
         response.setStatusCode(200);
         response.setMessage("글 불러오기 성공");
         response.setData(postRepository.findByWriter(jwtTokenProvider.getUserEmail(token)));
+
         return response;
+    }
+
+    @GetMapping("/post/timeline")
+    public JSONResponse<List<Post>> getTimelinePost(@RequestParam double lat, @RequestParam double lon) {
+
+        Long spotID = spotRepository.findByLatitudeAndLongitude(lat, lon).getId();
+
+        JSONResponse<List<Post>> response = new JSONResponse<>();
+        response.setStatusCode(200);
+        response.setMessage("타임라인 글 불러오기 성공");
+        response.setData(postRepository.findBySpotId(spotID));
+        return response;
+    }
+
+
+}
+
+@Getter
+@NoArgsConstructor
+class PostMine {
+
+    private Long id;
+    private String img_url;
+    private String contents;
+    private Spot spot;
+    private List<String> tag;
+
+    public PostMine(Post post, PostTag tag, Spot spot){
+        this.id = post.getId();
+        this.img_url = post.getImg_url();
+        this.contents = post.getContents();
+        this.spot = spot;
     }
 
 }

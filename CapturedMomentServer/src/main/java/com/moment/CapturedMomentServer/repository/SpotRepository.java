@@ -28,5 +28,4 @@ public interface SpotRepository extends JpaRepository<Spot, Long> {
 
     Spot findByLatitudeAndLongitude(Double latitude, Double longitude);
 
-
 }

@@ -5,7 +5,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
-import java.util.function.LongBinaryOperator;
 
 @Getter
 @NoArgsConstructor
@@ -26,12 +25,13 @@ public class Post extends Timestamped{
     private String contents;
 
     @Column(nullable = false)
-    private Long spot_id;
+    @JoinColumn(name = "spot_id")
+    private Long spotId;
 
     public Post(PostRequestDto requestDto, Long spotId, String userEmail){
         this.writer = userEmail;
         this.img_url = requestDto.getImg_url();
         this.contents = requestDto.getContents();
-        this.spot_id = spotId;
+        this.spotId = spotId;
     }
 }
