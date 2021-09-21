@@ -47,12 +47,11 @@ public class ImageUploadService {
 
         Calendar calendar = Calendar.getInstance();
         fileName += calendar.get(Calendar.YEAR);
-        fileName += calendar.get(Calendar.MONTH);
+        fileName += setNameLength(calendar.get(Calendar.MONTH));
 
         //파일 정리용 폴더 생성
         dir += fileName;
         File folder = new File(dir);
-        System.out.println(folder.getAbsolutePath());
         if (!folder.exists()) {
             try {
                 folder.mkdir();
@@ -63,11 +62,11 @@ public class ImageUploadService {
         }
         fileName += "/";
 
-        fileName += calendar.get(Calendar.DATE);
-        fileName += calendar.get(Calendar.HOUR);
-        fileName += calendar.get(Calendar.MINUTE);
-        fileName += calendar.get(Calendar.SECOND);
-        fileName += calendar.get(Calendar.MILLISECOND);
+        fileName += setNameLength(calendar.get(Calendar.DATE));
+        fileName += setNameLength(calendar.get(Calendar.HOUR));
+        fileName += setNameLength(calendar.get(Calendar.MINUTE));
+        fileName += setNameLength(calendar.get(Calendar.SECOND));
+        fileName += setNameLength(calendar.get(Calendar.MILLISECOND));
         fileName += extName;
 
         return fileName;
@@ -80,5 +79,12 @@ public class ImageUploadService {
         FileOutputStream fos = new FileOutputStream(SAVE_PATH + "/" + saveFileName);
         fos.write(data);
         fos.close();
+    }
+
+    private String setNameLength(int date){
+        if(date < 10){
+            return "0" + date;
+        }
+        return Integer.toString(date);
     }
 }
