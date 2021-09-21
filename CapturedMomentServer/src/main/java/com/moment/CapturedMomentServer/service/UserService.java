@@ -3,6 +3,7 @@ package com.moment.CapturedMomentServer.service;
 import com.moment.CapturedMomentServer.domain.User;
 import com.moment.CapturedMomentServer.domain.UserRequestDto;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 import java.util.Optional;
@@ -12,7 +13,7 @@ import java.util.Optional;
 public interface UserService {
 
     //회원가입
-    public User signUp(UserRequestDto requestDto);
+    public User signUp(UserRequestDto requestDto, MultipartFile image);
 
     // 로그인할 이메일 & 패스워드 체크
     public User signIn(UserRequestDto.LoginDto userDto);

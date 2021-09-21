@@ -1,6 +1,7 @@
 package com.moment.CapturedMomentServer.controller;
 
 
+import org.springframework.http.MediaType;
 import com.moment.CapturedMomentServer.config.security.JwtTokenProvider;
 import com.moment.CapturedMomentServer.domain.User;
 import com.moment.CapturedMomentServer.domain.UserRequestDto;
@@ -9,8 +10,10 @@ import com.moment.CapturedMomentServer.response.JSONResponse;
 import com.moment.CapturedMomentServer.service.UserService;
 import io.swagger.annotations.*;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.Collections;
 
@@ -32,16 +35,18 @@ public class UserController {
     @ApiResponses({
             @ApiResponse(code = 200, message = "회원가입 성공")
     })
-    @PostMapping("/user/signup")
-    public JSONResponse<User> create(@RequestBody UserRequestDto userDto){
-        userDto.setRoles(Collections.singletonList("ROLE_USER")); // 최초 가입시 USER로 설정
-        User user = userService.signUp(userDto);                // 서비스로 user 정보 전달
+    @PostMapping(value = "/user/signup",
+            consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.MULTIPART_FORM_DATA_VALUE})
+    public JSONResponse<User> create(@RequestPart(value = "user") UserRequestDto userDto, @RequestPart(value = "image", required = false) MultipartFile image){
+
+        userDto.setRoles(Collections.singletonList("ROLE_USER"));// 최초 가입시 USER로 설정
+        User user = userService.signUp(userDto, image);                  // 서비스로 user 정보 전달
 
         JSONResponse<User> response = new JSONResponse<>();
         if(user != null) {
             response.setStatusCode(200);
             response.setMessage("회원가입 성공");
-            response.setData(user);
+            response.setData(null);
         }
 
         return response;
