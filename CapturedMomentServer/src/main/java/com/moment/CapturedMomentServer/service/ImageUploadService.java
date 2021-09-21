@@ -1,5 +1,6 @@
 package com.moment.CapturedMomentServer.service;
 
+import net.bytebuddy.utility.RandomString;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -7,6 +8,8 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.Calendar;
+import java.util.Random;
+import java.util.concurrent.ThreadLocalRandom;
 
 /*2021-09-19 예진*/
 @Service
@@ -40,7 +43,7 @@ public class ImageUploadService {
     }
 
 
-    // 현재 시간을 기준으로 파일 이름 생성
+    // 현재 시간을 기준으로 랜덤 파일 이름 생성
     private String genSaveFileName(String extName) {
         String fileName = "";
         String dir = "C:\\" + SAVE_PATH + "\\";
@@ -61,13 +64,12 @@ public class ImageUploadService {
             }
         }
         fileName += "/";
+        RandomString randomString = new RandomString(16);
 
-        fileName += setNameLength(calendar.get(Calendar.DATE));
-        fileName += setNameLength(calendar.get(Calendar.HOUR));
-        fileName += setNameLength(calendar.get(Calendar.MINUTE));
-        fileName += setNameLength(calendar.get(Calendar.SECOND));
-        fileName += setNameLength(calendar.get(Calendar.MILLISECOND));
+        fileName += randomString.nextString();
         fileName += extName;
+
+        System.out.println(fileName);
 
         return fileName;
     }

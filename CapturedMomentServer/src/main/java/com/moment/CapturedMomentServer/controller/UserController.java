@@ -46,7 +46,7 @@ public class UserController {
         if(user != null) {
             response.setStatusCode(200);
             response.setMessage("회원가입 성공");
-            response.setData(user);
+            response.setData(null);
         }
 
         return response;
