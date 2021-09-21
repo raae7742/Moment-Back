@@ -15,7 +15,7 @@ public class Spot {
 
     @Id
     @GeneratedValue(generator = RandomGenerator.generatorName)
-    @GenericGenerator(name = RandomGenerator.generatorName, strategy = "com.moment.CapturedMomentServer.util.RandomGenerator")
+   // @GenericGenerator(name = RandomGenerator.generatorName, strategy = "com.moment.CapturedMomentServer.util.RandomGenerator")
     private Long id;
 
     @Column(nullable = false)
