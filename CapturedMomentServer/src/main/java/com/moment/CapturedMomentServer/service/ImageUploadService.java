@@ -7,9 +7,8 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.nio.file.Files;
 import java.util.Calendar;
-import java.util.Random;
-import java.util.concurrent.ThreadLocalRandom;
 
 /*2021-09-19 예진*/
 @Service
@@ -46,7 +45,7 @@ public class ImageUploadService {
     // 현재 시간을 기준으로 랜덤 파일 이름 생성
     private String genSaveFileName(String extName) {
         String fileName = "";
-        String dir = "C:\\" + SAVE_PATH + "\\";
+        String dir = SAVE_PATH + "/";
 
         Calendar calendar = Calendar.getInstance();
         fileName += calendar.get(Calendar.YEAR);
@@ -57,7 +56,7 @@ public class ImageUploadService {
         File folder = new File(dir);
         if (!folder.exists()) {
             try {
-                folder.mkdir();
+                Files.createDirectory(folder.toPath());
             } catch (Exception e) {
                 /*에러 수정*/
                 throw new RuntimeException(e);
@@ -68,8 +67,6 @@ public class ImageUploadService {
 
         fileName += randomString.nextString();
         fileName += extName;
-
-        System.out.println(fileName);
 
         return fileName;
     }
