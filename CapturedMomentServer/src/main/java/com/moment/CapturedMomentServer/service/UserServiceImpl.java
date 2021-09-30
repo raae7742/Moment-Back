@@ -24,8 +24,9 @@ public class UserServiceImpl implements UserService {
     private final ImageUploadService imageUploadService;
 
     public User signUp(UserRequestDto requestDto, MultipartFile image){
-        if (validateDuplicateMember(requestDto.getEmail()))
-            throw new ConflictError("이미 가입된 e-mail입니다.");        // 이메일 중복 체크
+        if (validateDuplicateMember(requestDto.getEmail())) {
+            return null;    // 이메일 중복 체크
+        }
         requestDto.setPw(passwordEncoder.encode(requestDto.getPw()));           // 비밀번호 암호화
         requestDto.setImg_url(imageUploadService.restore(image));
         return userRepository.save(new User(requestDto));
@@ -33,11 +34,12 @@ public class UserServiceImpl implements UserService {
 
     public User signIn(UserRequestDto.LoginDto loginDto) {
 
-        User user = userRepository.findByEmail(loginDto.getEmail())             // 이메일로 user 검색
-                .orElseThrow(() -> new UnauthorizedError("가입되지 않은 e-mail입니다."));
+        User user = userRepository.findByEmail(loginDto.getEmail()).orElseGet(() -> null );             // 이메일로 user 검색
+                //.orElseThrow(() -> new UnauthorizedError("가입되지 않은 e-mail입니다."));
 
         if (!passwordEncoder.matches(loginDto.getPw(), user.getPw()))           // 패스워드 확인
-            throw new UnauthorizedError("잘못된 비밀번호입니다.");
+            //throw new UnauthorizedError("잘못된 비밀번호입니다.");
+            return null;
 
         return user;
     }
