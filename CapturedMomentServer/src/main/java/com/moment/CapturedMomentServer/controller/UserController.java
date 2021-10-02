@@ -107,7 +107,7 @@ public class UserController {
 
         //서버 오류를 할 필요가 있을까?
         if(user == null){
-            responseMap.put("status", "500");
+            responseMap.put("status", "400");
             responseMap.put("message", "해당 아이디의 사용자를 찾을 수 없음");
             return new ResponseEntity<HashMap>(responseMap, HttpStatus.INTERNAL_SERVER_ERROR);
         }
