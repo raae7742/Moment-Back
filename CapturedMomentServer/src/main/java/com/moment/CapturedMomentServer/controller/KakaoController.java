@@ -1,154 +1,89 @@
 package com.moment.CapturedMomentServer.controller;
 
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
-import org.json.simple.JSONObject;
-import org.springframework.ui.Model;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.moment.CapturedMomentServer.domain.kakao.KakaoProfile;
+import com.moment.CapturedMomentServer.domain.kakao.OAuthToken;
+import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.ResponseEntity;
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.client.RestTemplate;
 
-import javax.servlet.http.HttpServletRequest;
-import java.io.*;
-import java.net.HttpURLConnection;
-import java.net.URL;
-import java.util.HashMap;
+import java.util.Objects;
 
+@RequiredArgsConstructor
 @RestController
 public class KakaoController {
+    private final ObjectMapper objectMapper;
 
-    @RequestMapping(value = "/kakao/getKakaoAuthUrl")
-    public @ResponseBody
-    String getKakaoAuthUrl(HttpServletRequest request) throws Exception {
-        String reqUrl = "https://kauth.kakao.com/oauth/authorize"
-                + "?client_id=e24fffdae5b50d84b870586c47446b6d"
-                + "&redirect_uri=http://localhost:8080/kakao/oauth_kakao"
-                + "&response_type=code";
+    // 인가 코드 받기
+    @RequestMapping(value = "/kakao/callback")
+    public KakaoProfile getCode(String code) {
 
-        return reqUrl;
-    }
+        // 파라미터들과 함께 토큰을 요청하는 body
+        MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
+        params.add("grant_type", "authorization_code");
+        params.add("client_id", "e24fffdae5b50d84b870586c47446b6d");
+        params.add("redirect_uri", "http://localhost:8080/kakao/callback");
+        params.add("code", code);
 
-    // 카카오 연동 정보 조회
-    @RequestMapping(value = "/kakao/oauth_kakao")
-    public String oauthKakao(@RequestParam(value = "code", required = false) String code, Model model) throws Exception {
-        System.out.println("#########" + code);
-        String access_Token = getAccessToken(code);
-        System.out.println("###access_Token#### : " + access_Token);
+        // HttpHeader 오브젝트 생성
+        HttpHeaders headersForAccessToken = new HttpHeaders();
+        headersForAccessToken.add("Content-type", "application/x-www-form-urlencoded;charset=utf-8");
 
+        // HttpHeader와 HttpBody를 한 오브젝트에 담음
+        HttpEntity<MultiValueMap<String, String>> kakaoTokenRequest = new HttpEntity<>(params, headersForAccessToken);
 
-        HashMap<String, Object> userInfo = getUserInfo(access_Token);
-        System.out.println("###access_Token#### : " + access_Token);
-        System.out.println("###userInfo#### : " + userInfo.get("email"));
+        // POST 방식으로 kakao에 데이터 요청
+        RestTemplate rt = new RestTemplate();       // http 요청을 간단히 도와주는 클래스
 
-        JSONObject kakaoInfo = new JSONObject(userInfo);
-        model.addAttribute("kakaoInfo", kakaoInfo);
+        // Http 요청
+        ResponseEntity<String> accessTokenResponse = rt.exchange(
+                "https://kauth.kakao.com/oauth/token",
+                HttpMethod.POST,
+                kakaoTokenRequest,
+                String.class
+        );
 
-        return "/home"; //본인 원하는 경로 설정
-    }
-
-    // 액세스 토큰 발급하기
-    public String getAccessToken(String authorize_code) {
-        String access_Token = "";
-        String refresh_Token = "";
-        String reqUrl = "https://kauth.kakao.com/oauth/token";
-
+        // JSON 응답을 객체로 변환
+        OAuthToken oAuthToken = null;
         try {
-            URL url = new URL(reqUrl);
-
-            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-            conn.setRequestMethod("POST");
-            conn.setDoOutput(true);
-
-            // POST 요청에 필요한 파라미터 전송
-            BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(conn.getOutputStream()));
-            StringBuilder sb = new StringBuilder();
-            sb.append("grant_type=authorization_code");
-            sb.append("&client_id=e24fffdae5b50d84b870586c47446b6d");
-            sb.append("&redirect_uri=http://localhost:8080/user/kakaosignin");
-            sb.append("&code=" + authorize_code);
-            bw.write(sb.toString());
-            bw.flush();
-
-            int responseCode = conn.getResponseCode();
-            System.out.println("responseCode : " + responseCode);
-
-            // response로 얻어온 JSON 타입 메세지 읽어오기
-            BufferedReader br = new BufferedReader(new InputStreamReader(conn.getInputStream()));
-            String line = "";
-            String result = "";
-
-            while ((line = br.readLine()) != null) {
-                result += line;
-            }
-            System.out.println("response body : " + result);
-
-            // GSON 라이브러리로 JSON 파싱 객체 생성
-            JsonParser parser = new JsonParser();
-            JsonElement element = parser.parse(result);
-
-            access_Token = element.getAsJsonObject().get("access_token").getAsString();
-            refresh_Token = element.getAsJsonObject().get("refresh_token").getAsString();
-
-            System.out.println("access_token : " + access_Token);
-            System.out.println("refresh_token : " + refresh_Token);
-
-            br.close();
-            bw.close();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return access_Token;
-    }
-
-    //유저정보조회
-    public HashMap<String, Object> getUserInfo (String access_Token) {
-
-        //    요청하는 클라이언트마다 가진 정보가 다를 수 있기에 HashMap타입으로 선언
-        HashMap<String, Object> userInfo = new HashMap<String, Object>();
-        String reqURL = "https://kapi.kakao.com/v2/user/me";
-        try {
-            URL url = new URL(reqURL);
-            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-            conn.setRequestMethod("GET");
-
-            //    요청에 필요한 Header에 포함될 내용
-            conn.setRequestProperty("Authorization", "Bearer " + access_Token);
-
-            int responseCode = conn.getResponseCode();
-            System.out.println("responseCode : " + responseCode);
-
-            BufferedReader br = new BufferedReader(new InputStreamReader(conn.getInputStream()));
-
-            String line = "";
-            String result = "";
-
-            while ((line = br.readLine()) != null) {
-                result += line;
-            }
-            System.out.println("response body : " + result);
-
-            JsonParser parser = new JsonParser();
-            JsonElement element = parser.parse(result);
-
-            JsonObject properties = element.getAsJsonObject().get("properties").getAsJsonObject();
-            JsonObject kakao_account = element.getAsJsonObject().get("kakao_account").getAsJsonObject();
-
-            String nickname = properties.getAsJsonObject().get("nickname").getAsString();
-            String email = kakao_account.getAsJsonObject().get("email").getAsString();
-
-            userInfo.put("accessToken", access_Token);
-            userInfo.put("nickname", nickname);
-            userInfo.put("email", email);
-
-        } catch (IOException e) {
-            // TODO Auto-generated catch block
+            oAuthToken = objectMapper.readValue(accessTokenResponse.getBody(), OAuthToken.class);
+        } catch (JsonProcessingException e) {
             e.printStackTrace();
         }
 
-        return userInfo;
+        // 토큰 전달 받기
+        //return oAuthToken;
+
+        // 발급받은 Access Token으로 사용자 정보를 조회
+        HttpHeaders headersForRequestProfile = new HttpHeaders();
+        headersForRequestProfile.add("Authorization", "Bearer " + Objects.requireNonNull(oAuthToken).getAccess_token());
+        headersForRequestProfile.add("Content-type", "application/x-www-form-urlencoded;charset=utf-8");
+
+        HttpEntity<MultiValueMap<String, String>> kakaoResourceProfileRequest = new HttpEntity<>(headersForRequestProfile);
+
+        // Http 요청 - POST
+        ResponseEntity<String> resourceProfileResponse = rt.exchange(
+                "https://kapi.kakao.com/v2/user/me",
+                HttpMethod.POST,
+                kakaoResourceProfileRequest,
+                String.class
+        );
+
+        KakaoProfile profile = null;
+        try {
+            profile = objectMapper.readValue(resourceProfileResponse.getBody(), KakaoProfile.class);
+        } catch (JsonProcessingException e) {
+            e.printStackTrace();
+        }
+
+        return profile;
     }
-
-
 }
