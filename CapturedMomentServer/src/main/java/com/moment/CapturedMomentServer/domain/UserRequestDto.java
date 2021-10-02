@@ -93,5 +93,6 @@ public class UserRequestDto {
             this.comment = comment;
             this.img_url = img_url;
         }
+
     }
 }
