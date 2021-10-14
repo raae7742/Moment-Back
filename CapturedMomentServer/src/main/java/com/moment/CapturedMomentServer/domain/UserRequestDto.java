@@ -69,7 +69,10 @@ public class UserRequestDto {
     // 마이페이지 프로필 dto
     @Getter
     @Setter
+    @AllArgsConstructor
+    @NoArgsConstructor
     public static class ProfileDto {
+
         @ApiParam(value = "회원 닉네임", required = true)
         @ApiModelProperty(example = "닉네임")
         private String nickname;    // 회원 닉네임
@@ -87,12 +90,5 @@ public class UserRequestDto {
             this.comment = user.getComment();
             this.img_url = user.getImg_url();
         }
-
-        public ProfileDto(String nickname, String comment, String img_url) {
-            this.nickname = nickname;
-            this.comment = comment;
-            this.img_url = img_url;
-        }
-
     }
 }

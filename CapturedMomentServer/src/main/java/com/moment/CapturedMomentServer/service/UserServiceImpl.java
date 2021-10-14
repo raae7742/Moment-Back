@@ -60,13 +60,12 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public String updateProfile(String email, UserRequestDto.ProfileDto requestDto) {
+    public String updateProfile(String email, UserRequestDto.ProfileDto requestDto, MultipartFile image) {
         User user = userRepository.findByEmail(email).orElseThrow(                              // 이메일로 유저 검색
                 () -> new IllegalArgumentException("아이디가 존재하지 않습니다.")
         );
+        requestDto.setImg_url(imageUploadService.restore(image));
         user.update(requestDto);
-
         return email;
     }
-
 }

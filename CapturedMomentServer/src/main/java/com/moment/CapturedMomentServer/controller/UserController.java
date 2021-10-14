@@ -141,14 +141,15 @@ public class UserController {
     @ApiImplicitParams({
             @ApiImplicitParam(name = "X-AUTH-TOKEN", value = "JWT 토큰", required = true, dataType = "String", paramType = "header"),
     })
-    @PutMapping("/user/mypage")
-    public ResponseEntity<HashMap> updateProfile(@RequestHeader("X-AUTH-TOKEN") String token, @RequestBody UserRequestDto.ProfileDto requestDto) {
-
+    @PutMapping(value = "/user/mypage", consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.MULTIPART_FORM_DATA_VALUE})
+    public ResponseEntity<HashMap> updateProfile(@RequestHeader("X-AUTH-TOKEN") String token,
+                                                 @RequestPart(value="profile") UserRequestDto.ProfileDto requestDto,
+                                                 @RequestPart(value = "image") MultipartFile image) {
         HashMap<String, Object> responseMap = new HashMap<>();
 
         responseMap.put("status", "200");
         responseMap.put("message", "프로필 업데이트 성공");
-        responseMap.put("data", userService.updateProfile(jwtTokenProvider.getUserEmail(token), requestDto));
+        responseMap.put("data", userService.updateProfile(jwtTokenProvider.getUserEmail(token), requestDto, image));
 
         return new ResponseEntity<HashMap>(responseMap, HttpStatus.OK);
     }
