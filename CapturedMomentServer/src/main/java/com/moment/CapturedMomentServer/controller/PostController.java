@@ -81,16 +81,21 @@ public class PostController {
     }
 
     @GetMapping("/post/mypage")
-    public JSONResponse<List<Post>> createPosts(@RequestHeader("X-AUTH-TOKEN") String token){
+    public JSONResponse<List<PostResponse>> createPosts(@RequestHeader("X-AUTH-TOKEN") String token){
 
-        //Post post = postRepository.findByWriter(jwtTokenProvider.getUserEmail(token));
-
-        JSONResponse<List<Post>> response = new JSONResponse<>();
+        List<Post> post = postRepository.findByWriter(jwtTokenProvider.getUserEmail(token));
+        List<PostResponse> postRes = new ArrayList<PostResponse>();
+        for (int i=0; i< post.size(); i++) {
+            postRes.add(new PostResponse(post.get(i),
+                    postTagRepository.findByPostId(post.get(i).getId()),
+                    spotRepository.findById(post.get(i).getSpotId())));
+        }
+        JSONResponse<List<PostResponse>> response = new JSONResponse<>();
         response.setStatusCode(200);
-        response.setMessage("글 불러오기 성공");
-        response.setData(postRepository.findByWriter(jwtTokenProvider.getUserEmail(token)));
-
+        response.setMessage("마이페이지 글 불러오기 성공");
+        response.setData(postRes);
         return response;
+
     }
 
     @GetMapping("/post/timeline")
