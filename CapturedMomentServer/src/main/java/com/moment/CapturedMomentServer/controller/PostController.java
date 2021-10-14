@@ -13,6 +13,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
 import java.lang.reflect.Array;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -122,13 +123,16 @@ public class PostController {
 
 @Getter
 @NoArgsConstructor
-class PostResponse {
+class PostResponse  {
 
     private Long id;
     private String img_url;
     private String contents;
     private Optional<Spot> spot;
     private List<String> tag;
+    private LocalDateTime createdAt;
+    private LocalDateTime modifiedAt;
+
 
     public PostResponse(Post post, List<PostTag> tag, Optional<Spot> spot){
         this.id = post.getId();
@@ -154,6 +158,8 @@ class PostResponse {
 
         this.tag = tagList;
         this.spot = spot;
+        this.createdAt = post.getCreatedAt();
+        this.modifiedAt = post.getModifiedAt();
     }
 
 
