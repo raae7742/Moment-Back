@@ -16,13 +16,14 @@ public class PostTag {
     private Long id;
 
     @Column(nullable = false)
-    private Long post_id;
+    @JoinColumn(name = "post_id")
+    private Long postId;
 
     @Column(nullable = false)
     private int tag;
 
     public PostTag(Long postId, Integer tag){
-        this.post_id = postId;
+        this.postId = postId;
         this.tag = tag;
     }
 }
