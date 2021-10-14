@@ -6,12 +6,16 @@ import com.moment.CapturedMomentServer.repository.PostRepository;
 import com.moment.CapturedMomentServer.repository.PostTagRepository;
 import com.moment.CapturedMomentServer.repository.SpotRepository;
 import com.moment.CapturedMomentServer.response.JSONResponse;
+import io.swagger.models.auth.In;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
+import java.lang.reflect.Array;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequiredArgsConstructor
@@ -90,35 +94,62 @@ public class PostController {
     }
 
     @GetMapping("/post/timeline")
-    public JSONResponse<List<Post>> getTimelinePost(@RequestParam double lat, @RequestParam double lon) {
+    public JSONResponse<List<PostResponse>> getTimelinePost(@RequestParam double lat, @RequestParam double lon) {
 
-        Long spotID = spotRepository.findByLatitudeAndLongitude(lat, lon).getId();
+        Long spotID = spotRepository.spotIdGet(lat, lon);
+        System.out.println("spotId:" + spotID);
+        List<Post> post = postRepository.findBySpotId(spotID);
 
-        JSONResponse<List<Post>> response = new JSONResponse<>();
+        List<PostResponse> postRes = new ArrayList<PostResponse>();
+
+        for (int i=0; i< post.size(); i++) {
+            postRes.add(new PostResponse(post.get(i),
+                    postTagRepository.findByPostId(post.get(i).getId()),
+                    spotRepository.findById(spotID)));
+        }
+        JSONResponse<List<PostResponse>> response = new JSONResponse<>();
         response.setStatusCode(200);
         response.setMessage("타임라인 글 불러오기 성공");
-        response.setData(postRepository.findBySpotId(spotID));
+        response.setData(postRes);
         return response;
     }
-
-
 }
 
 @Getter
 @NoArgsConstructor
-class PostMine {
+class PostResponse {
 
     private Long id;
     private String img_url;
     private String contents;
-    private Spot spot;
+    private Optional<Spot> spot;
     private List<String> tag;
 
-    public PostMine(Post post, PostTag tag, Spot spot){
+    public PostResponse(Post post, List<PostTag> tag, Optional<Spot> spot){
         this.id = post.getId();
         this.img_url = post.getImg_url();
         this.contents = post.getContents();
+
+        ArrayList<String> tagList = new ArrayList();
+        for (int i = 0; i < tag.size(); i++) {
+
+            switch (tag.get(i).getTag()) {
+                case 0: tagList.add("풍경"); break;
+                case 1: tagList.add("일상"); break;
+                case 2: tagList.add("건축"); break;
+                case 3: tagList.add("인물"); break;
+                case 4: tagList.add("자연"); break;
+                case 5: tagList.add("바다"); break;
+                case 6: tagList.add("스냅샷"); break;
+                case 7: tagList.add("기타"); break;
+                default: System.out.println("다른수");
+
+            }
+        }
+
+        this.tag = tagList;
         this.spot = spot;
     }
+
 
 }
