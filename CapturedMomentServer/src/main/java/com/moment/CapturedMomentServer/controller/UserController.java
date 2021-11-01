@@ -21,6 +21,7 @@ import java.util.HashMap;
 
 /* 김예진 2021-08-08, 장현애 08-15 */
 
+@CrossOrigin
 @Controller
 @RestController
 @RequiredArgsConstructor
