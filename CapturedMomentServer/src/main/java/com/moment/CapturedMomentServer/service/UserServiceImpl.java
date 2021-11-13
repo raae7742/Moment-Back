@@ -6,6 +6,7 @@ import com.moment.CapturedMomentServer.repository.UserRepository;
 import com.moment.CapturedMomentServer.util.ConflictError;
 import com.moment.CapturedMomentServer.util.UnauthorizedError;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.multipart.MultipartFile;
 
