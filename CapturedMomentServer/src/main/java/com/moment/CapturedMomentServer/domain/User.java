@@ -106,4 +106,10 @@ public class User extends Timestamped implements UserDetails {  // SpringSecurit
         this.comment = requestDto.getComment();
         this.img_url = requestDto.getImg_url();
     }
+
+    //비밀번호 업데이트
+    public void updatePwd(UserRequestDto.PasswordDto requestDto){
+        this.pw = requestDto.getPw();
+    }
+
 }

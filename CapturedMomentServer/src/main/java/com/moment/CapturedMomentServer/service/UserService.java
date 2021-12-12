@@ -21,10 +21,8 @@ public interface UserService {
     //전체 회원 조회
     public List<User> findUsers();
 
-    //email로 사람찾기
-    public Optional<User> findOne(String email);
-
-    //비밀번호 재설정하기(희망)
+    //비밀번호 재설정하기
+    public String updatePassword(String email, UserRequestDto.PasswordDto requestDto);
 
     // 프로필 수정하기
     public String updateProfile(String email, UserRequestDto.ProfileDto requestDto, MultipartFile image);
