@@ -17,7 +17,9 @@ public class VerifyCodeService {
 
     public boolean check(VerifyCode code){
         VerifyCode findCode = repository.findByEmail(code.getEmail());
-        if(code.getCode().equals(findCode.getCode()))
+        if(findCode == null)
+            return false;
+        else if(code.getCode().equals(findCode.getCode()))
             return true;
         else
             return false;
@@ -27,5 +29,15 @@ public class VerifyCodeService {
         if(repository.existsByEmail(code.getEmail()))
             repository.deleteByEmail(code.getEmail());
         return repository.save(new VerifyCode(code));
+    }
+
+    public void deleteByEmail(String email){
+        repository.deleteByEmail(email);
+    }
+
+    public VerifyCode findByCode(String code){
+        VerifyCode verifyCode = repository.findByCode(code);
+        if(verifyCode != null) repository.deleteByEmail(verifyCode.getEmail());
+        return verifyCode;
     }
 }

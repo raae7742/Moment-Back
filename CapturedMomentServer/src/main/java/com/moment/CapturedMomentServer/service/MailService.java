@@ -32,17 +32,19 @@ public class MailService {
         return true;
     }
 
-    public String changePassword(String email){
-        RandomString randomString = new RandomString(6);
-        String code = randomString.nextString();
+    public boolean changePassword(VerifyCode verifyCode){
+
+        if(verifyCode.getCode() == null)
+            return false;
 
         SimpleMailMessage simpleMailMessage = new SimpleMailMessage();
-        simpleMailMessage.setTo(email);
-        simpleMailMessage.setSubject("Captured-Moment 이메일 확인 코드");
-        simpleMailMessage.setText("임시 비밀번호는 " + code + " 입니다.\n"
-        + "이 비밀번호로 로그인 해 주십시오.");
+        simpleMailMessage.setTo(verifyCode.getEmail());
+        simpleMailMessage.setSubject("Captured-Moment 비밀번호 재설정 링크");
+        ///##수정
+       simpleMailMessage.setText("http://localhost:8080/user/password/" + verifyCode.getCode() + "\n"
+       + "위 링크에서 새 비밀번호를 만드세요");
 
         javaMailSender.send(simpleMailMessage);
-        return code;
+        return true;
     }
 }

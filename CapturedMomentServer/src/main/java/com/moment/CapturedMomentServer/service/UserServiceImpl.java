@@ -38,11 +38,21 @@ public class UserServiceImpl implements UserService {
         User user = userRepository.findByEmail(loginDto.getEmail()).orElseGet(() -> null );             // 이메일로 user 검색
                 //.orElseThrow(() -> new UnauthorizedError("가입되지 않은 e-mail입니다."));
 
-        if (!passwordEncoder.matches(loginDto.getPw(), user.getPw()))           // 패스워드 확인
+        if(user==null){
+            return null;
+        }
+        else if (!passwordEncoder.matches(loginDto.getPw(), user.getPw()))           // 패스워드 확인
             //throw new UnauthorizedError("잘못된 비밀번호입니다.");
             return null;
 
         return user;
+    }
+
+    public String updatePassword(String email, UserRequestDto.PasswordDto requestDto){
+        User user = userRepository.findByEmail(email).orElseGet(() -> null );
+        requestDto.setPw(passwordEncoder.encode(requestDto.getPw()));
+        user.updatePwd(requestDto);
+        return email;
     }
 
     //email 유효성 확인
@@ -53,11 +63,6 @@ public class UserServiceImpl implements UserService {
     //전체 회원 조회
     public List<User> findUsers(){
         return userRepository.findAll();
-    }
-
-    //email로 사람찾기
-    public Optional<User> findOne(String email){
-        return userRepository.findByEmail(email);
     }
 
     @Override

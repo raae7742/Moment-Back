@@ -97,6 +97,7 @@ public class UserController {
         HashMap<String, Object> responseMap = new HashMap<>();
 
         if(check){
+            verifyCodeService.deleteByEmail(verifyCode.getEmail());
             responseMap.put("status", 200);
             responseMap.put("message", "인증 성공");
             return new ResponseEntity<HashMap> (responseMap, HttpStatus.OK);
@@ -133,6 +134,58 @@ public class UserController {
             responseMap.put("status", 401);
             responseMap.put("message", "이메일 또는 비밀번호 오류");
             return new ResponseEntity<HashMap> (responseMap, HttpStatus.UNAUTHORIZED);
+        }
+    }
+
+    //비밀번호 재설정 링크 전송
+    @GetMapping(value = "/user/password/find")
+    public ResponseEntity<HashMap> findPasswordUrl(@RequestBody VerifyCodeDto codeDto) {
+
+        VerifyCode verifyCode = verifyCodeService.saveCode(codeDto);
+
+        boolean success = mailService.changePassword(verifyCode);
+
+        HashMap<String, Object> responseMap = new HashMap<>();
+        if (success) {
+            responseMap.put("status", 200);
+            responseMap.put("message", "메일 발송 성공");
+            responseMap.put("code", verifyCode.getCode());
+            return new ResponseEntity<HashMap>(responseMap, HttpStatus.OK);
+        } else {
+            responseMap.put("status", 500);
+            responseMap.put("message", "메일 발송 실패");
+            return new ResponseEntity<HashMap>(responseMap, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    //비밀번호 바꾸기
+    @PostMapping(value = "/user/password/{code}")
+    public ResponseEntity<HashMap> changePassword(@RequestBody UserRequestDto.PasswordDto requestDto, @PathVariable String code){
+
+        System.out.println(code);
+        VerifyCode verifyCode = verifyCodeService.findByCode(code);
+
+        HashMap<String, Object> responseMap = new HashMap<>();
+
+        if(verifyCode == null){
+            responseMap.put("status", 401);
+            responseMap.put("message", "만료되었거나 잘못된 링크");
+            return new ResponseEntity<HashMap>(responseMap, HttpStatus.CONFLICT);
+        }
+
+
+        userService.updatePassword(verifyCode.getEmail(), requestDto);
+
+        if(true) {
+            verifyCodeService.deleteByEmail(verifyCode.getEmail());
+            responseMap.put("status", 200);
+            responseMap.put("message", "비밀번호 변경 성공");
+            return new ResponseEntity<HashMap> (responseMap, HttpStatus.OK);
+        }
+        else{
+            responseMap.put("status", 500);
+            responseMap.put("message", "비밀번호 변경 실패");
+            return new ResponseEntity<HashMap> (responseMap, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 

@@ -66,6 +66,15 @@ public class UserRequestDto {
         private String pw;
     }
 
+    @Getter
+    @Setter
+    public static class PasswordDto{
+        @ApiParam(value = "회원 패스워드", required = true)
+        @ApiModelProperty(example = "패스워드")
+        private String pw;
+
+    }
+
     // 마이페이지 프로필 dto
     @Getter
     @Setter

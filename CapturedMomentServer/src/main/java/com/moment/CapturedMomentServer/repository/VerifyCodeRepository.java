@@ -8,6 +8,7 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface VerifyCodeRepository extends JpaRepository<VerifyCode, Long> {
     public VerifyCode findByEmail(String email);
+    public VerifyCode findByCode(String code);
     public boolean existsByEmail(String email);
     public void deleteByEmail(String email);
 }
